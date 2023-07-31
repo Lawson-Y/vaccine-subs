@@ -1,23 +1,47 @@
 package com.lawson.vaccine.subscribe.http.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
+@ApiModel(description = "约苗提交订单对象")
 public class OrderVO implements Serializable {
 
+    @ApiModelProperty(name = "用户出生年月")
     private String birthday;
+
+    @ApiModelProperty(name = "用户电话")
     private String tel;
+
+    @ApiModelProperty(name = "用户性别：2=女")
     private Integer sex;
+
+    @ApiModelProperty(name = "用户姓名")
     private String cname;
+
+    @ApiModelProperty(name = "用户信息接口返回的doctype")
     private Integer doctype;
+
+    @ApiModelProperty(name = "用户身份证号")
     private String idcard;
+
+    @ApiModelProperty(name = "接口返回的mxid")
     private String mxid;
+
+    @ApiModelProperty(name = "预约日期")
     private String date;
+
+    @ApiModelProperty(name = "接口返回的pid")
     private String pid;
+
+    @ApiModelProperty(name = "固定为1")
     @JSONField(name = "Ftime")
-    private Integer Ftime;
-    private String guid;
+    private Integer Ftime = 1;
+
+    @ApiModelProperty(name = "固定为空")
+    private String guid = "";
 
     public String getBirthday() {
         return birthday;

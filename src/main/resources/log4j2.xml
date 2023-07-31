@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- status用来指定log4j2本身的打印日志的级别.
+monitorinterval Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<Configuration status="WARN" monitorinterval="30">
+    <!--
+    log4j定义了8个级别的log(除去OFF和ALL 可以说分为6个级别),
+
+    * 优先级从高到低依次为:OFF FATAL ERROR WARN INFO DEBUG TRACE ALL
+    *
+    *  ALL    最低等级的 用于打开所有日志记录
+    *  TRACE  很低的日志级别 一般不会使用
+    *  DEBUG  指出细粒度信息事件对调试应用程序是非常有帮助的 主要用于开发过程中打印一些运行信息
+    *  INFO   消息在粗粒度级别上突出强调应用程序的运行过程
+    *        打印一些你感兴趣的或者重要的信息 这个可以用于生产环境中输出程序运行的一些重要信息
+    *        但是不能滥用 避免打印过多的日志
+    *  WARN   表明会出现潜在错误的情形 有些信息不是错误信息 但是也要给程序员的一些提示
+    *  ERROR  指出虽然发生错误事件 但仍然不影响系统的继续运行
+    *        打印错误和异常信息 如果不想输出太多的日志 可以使用这个级别
+    *  FATAL  指出每个严重的错误事件将会导致应用程序的退出
+    *        这个级别比较高了 重大错误 这种级别你可以直接停止程序了
+    *  OFF    最高等级的，用于关闭所有日志记录
+    *
+    *  如果将log level设置在某一个级别上 那么比此级别优先级高的log都能打印出来
+    *  例如 如果设置优先级为WARN 那么OFF FATAL ERROR WARN 4个级别的log能正常输出
+    *  而INFO DEBUG TRACE ALL级别的log则会被忽略
+    -->
+    <!--
+        %d{HH:mm:ss.SSS} 表示输出到毫秒的时间
+        %t 输出当前线程名称
+        %-5level 输出日志级别，-5 表示左对齐并且固定输出 5 个字符，如果不足在右边补空格
+        %logger 输出 logger 名称，最多 36 个字符
+        %msg 日志文本
+        %n 换行
+        顺带补充一下其他常用的占位符：
+        %F 输出所在的类文件名，如 Demo.java
+        %L 输出行号
+        %M 输出所在方法名
+        %l 输出语句所在的行数, 包括类名、方法名、文件名、行数
+        %p 输出日志级别
+        %c 输出包名，如果后面跟有 {length.} 参数，比如说 %c{1.}，它将输出报名的第一个字符，如 com.itwanger 的实际报名将只输出 c.i
+    -->
+    <Appenders>
+        <!--Console标签是设置控制台输出的，属性name是设置其名字，target是设置其输出模式-->
+        <Console name="Console" target="system_out">
+            <!--ThresholdFilter标签是设置其输出级别过滤，
+                属性onMatch值是accept表示接收info级别以上的，
+                属性onMismatch值是deny表示不接收info级别以下的，
+            -->
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--PatternLayout标签是设置控制台输出格式-->
+            <PatternLayout
+                    pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %highlight{%-5p}{ERROR=Bright RED, WARN=Bright Yellow, INFO=Bright Green, DEBUG=Bright Cyan} [%-4L] - [%X{X-B3-TraceId}] - %c{1.} : %m%n"/>
+        </Console>
+
+        <!--File标签是设置输出文件，属性name是设置其名字，fileName是设置文件路径，append表示是否追加输出，true追加，false不追加-->
+        <File name="Log" fileName="logs/test.log" append="false">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} %L %M - %msg%n"/>
+        </File>
+
+        <!--RollingFile标签是设置回滚文件，属性name是设置其名字，fileName是设置文件路径，filePattern表示回滚文件文件名格式-->
+        <RollingFile name="RollingFileInfo" fileName="logs/info.log" filePattern="logs/info-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %l - [%X{X-B3-TraceId}] - %msg%n"/>
+            <!-- Policies :日志滚动策略-->
+            <Policies>
+                <!-- 时间滚动策略,默认0点小时产生新的文件,
+                interval="6" : 自定义文件滚动时间间隔,每隔6小时产生新文件,
+                modulate="true" : 产生文件是否以0点偏移时间,即6点,12点,18点,0点-->
+                <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+                <!--文件大小滚动策略-->
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了20 -->
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+    </Appenders>
+
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <Loggers>
+        <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
+        <!--Logger节点用来单独指定日志的形式，name为包路径,比如要为org.springframework包下所有日志指定为INFO级别等。 -->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="INFO"/>
+        <!-- Root节点用来指定项目的根日志，如果没有单独指定Logger，那么就会默认使用该Root日志输出 -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileInfo"/>
+        </Root>
+        <!--AsyncLogger :异步日志,LOG4J有三种日志模式,全异步日志,混合模式,同步日志,性能从高到底,线程越多效率越高,也可以避免日志卡死线程情况发生-->
+        <!--additivity="false" : additivity设置事件是否在root logger输出，为了避免重复输出，可以在Logger 标签下设置additivity为”false”-->
+        <!--        <AsyncLogger name="AsyncLogger" level="trace" includeLocation="true" additivity="false">-->
+        <!--            <appender-ref ref="RollingFileError"/>-->
+        <!--        </AsyncLogger>-->
+    </Loggers>
+</Configuration>

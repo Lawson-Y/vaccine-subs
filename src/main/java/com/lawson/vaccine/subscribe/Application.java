@@ -1,12 +1,10 @@
 package com.lawson.vaccine.subscribe;
 
-import cn.hutool.crypto.symmetric.AES;
 import com.alibaba.fastjson.JSONObject;
 import com.dtflys.forest.springboot.annotation.ForestScan;
-import com.lawson.vaccine.subscribe.dto.AESConfigDTO;
 import com.lawson.vaccine.subscribe.http.api.YueMiaoApi;
 import com.lawson.vaccine.subscribe.http.vo.OrderVO;
-import com.lawson.vaccine.subscribe.utils.GenericIdUtils;
+import com.lawson.vaccine.subscribe.http.vo.UserVO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,14 +32,9 @@ public class Application {
         orderVO.setGuid("");
         String jsonStr = JSONObject.toJSONString(orderVO);
         System.out.println(jsonStr);
-        AESConfigDTO aesConfigDTO = new AESConfigDTO()
+        UserVO userVO = new UserVO()
                 .setKey("4fc27a4c4421c9fe");
-        AES aes = new AES("CBC", "PKCS7Padding", aesConfigDTO.getKey().getBytes(), aesConfigDTO.getIv().getBytes());
-        String s = aes.encryptHex(jsonStr);
+        String s = userVO.encrypt(orderVO);
         System.out.println(s);
-        String res = api.orderPost(s, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTA2NDg4MzYuMzYwMjkyLCJleHAiOjE2OTA2NTI0MzYuMzYwMjkyLCJzdWIiOiJZTlcuVklQIiwianRpIjoiMjAyMzA3MzAwMDM5MDUiLCJ2YWwiOiJhWFRSQVFJQUFBQUVibTl1WlJ4dmNYSTFielZQVVVWcmFrRnplbEYxU1ZwYVEwd3lXVEF0ZVZaVkFCeHZWVEkyV0hSNFJEUTRjelJWXHJcblUxZ3hSVk5FVFZWSGNVWkZlamt3RGpFeE55NHhOek11TnpNdU1qTXlBQ3RUZERSTWF6QTFZVVZNVjI5M2EycHFXVkl5YzJkd1JtaFNcclxuV0doVU4yZFpUMUJ6TW05dFdqbEtRbkZGQVFBQUFBQT0ifQ.pryHp_t0P9jvNXqQyS0gR_9g8oobyin-VB6Xj_bx46c; path=/"
-                , GenericIdUtils.zfsw()
-        );
-        System.out.println(res);
     }
 }

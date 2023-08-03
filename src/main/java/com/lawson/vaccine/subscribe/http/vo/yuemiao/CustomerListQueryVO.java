@@ -1,16 +1,18 @@
-package com.lawson.vaccine.subscribe.http.vo;
+package com.lawson.vaccine.subscribe.http.vo.yuemiao;
 
+import com.dtflys.forest.annotation.JSONQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
 @ApiModel(description = "获取结构列表查询条件对象")
 public class CustomerListQueryVO implements Serializable {
 
     @ApiModelProperty(name = "城市名称：[\"湖南省\",\"长沙市\",\"\"]")
-    private String[] city;
+    private String city;
 
     @ApiModelProperty(name = "维度：28.19409")
     private Double lat;
@@ -19,19 +21,19 @@ public class CustomerListQueryVO implements Serializable {
     private Double lng;
 
     @ApiModelProperty(name = "id：0")
-    private Integer id;
+    private Integer id = 0;
 
     @ApiModelProperty(name = "城市代码：430100")
-    private Integer cityCode;
+    private Integer cityCode = 0;
 
     @ApiModelProperty(name = "产品：25")
     private Integer product;
 
-    public String[] getCity() {
+    public String getCity() {
         return city;
     }
 
-    public CustomerListQueryVO setCity(String[] city) {
+    public CustomerListQueryVO setCity(String city) {
         this.city = city;
         return this;
     }
@@ -84,7 +86,7 @@ public class CustomerListQueryVO implements Serializable {
     @Override
     public String toString() {
         return "CustomerListQueryVO{" +
-                "city=" + Arrays.toString(city) +
+                "city=" + city +
                 ", lat=" + lat +
                 ", lng=" + lng +
                 ", id=" + id +

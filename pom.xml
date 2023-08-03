@@ -111,6 +111,24 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.42.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.4.4</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -498,6 +516,7 @@
                             <exclude>*.properties</exclude>
                             <exclude>*.xml</exclude>
                             <exclude>*.txt</exclude>
+                            <exclude>*.db</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

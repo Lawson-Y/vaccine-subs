@@ -2,19 +2,28 @@ package com.lawson.vaccine.subscribe;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dtflys.forest.springboot.annotation.ForestScan;
+import com.lawson.vaccine.subscribe.dto.UserDTO;
 import com.lawson.vaccine.subscribe.http.api.YueMiaoApi;
-import com.lawson.vaccine.subscribe.http.vo.OrderVO;
-import com.lawson.vaccine.subscribe.http.vo.UserVO;
+import com.lawson.vaccine.subscribe.http.vo.yuemiao.*;
+import com.lawson.vaccine.subscribe.http.wrap.YueMiaoWrap;
+import com.lawson.vaccine.subscribe.services.YuemiaoService;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
-@SpringBootApplication()
-@ForestScan(basePackages = "com.lawson.vaccin.subscribe.http.api")
+import java.util.List;
+
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@ForestScan(basePackages = "com.lawson.vaccine.subscribe.http.api")
+@MapperScan(basePackages = "com.lawson.vaccine.subscribe.mapper")
 public class Application {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(Application.class, args);
+        YuemiaoService bean = run.getBean(YuemiaoService.class);
+        bean.scanSubscribe();
     }
 
     public static void test1(YueMiaoApi api) {
@@ -32,9 +41,9 @@ public class Application {
         orderVO.setGuid("");
         String jsonStr = JSONObject.toJSONString(orderVO);
         System.out.println(jsonStr);
-        UserVO userVO = new UserVO()
+        UserDTO userDTO = new UserDTO()
                 .setKey("4fc27a4c4421c9fe");
-        String s = userVO.encrypt(orderVO);
+        String s = userDTO.encrypt(orderVO);
         System.out.println(s);
     }
 }

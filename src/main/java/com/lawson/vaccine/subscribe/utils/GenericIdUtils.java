@@ -6,8 +6,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class GenericIdUtils {
 
-    public static String zfsw() {
-        long l = (System.currentTimeMillis() / 1000);
+    public static String zfsw(long offsetMillis) {
+        long l = ((System.currentTimeMillis() + offsetMillis) / 1000);
         String zfsw = "zfsw_" + l;
         // 创建MessageDigest对象，并指定算法为MD5
         MessageDigest md = null;

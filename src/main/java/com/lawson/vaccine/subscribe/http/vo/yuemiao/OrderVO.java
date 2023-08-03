@@ -1,4 +1,4 @@
-package com.lawson.vaccine.subscribe.http.vo;
+package com.lawson.vaccine.subscribe.http.vo.yuemiao;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModel;

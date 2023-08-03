@@ -1,4 +1,4 @@
-package com.lawson.vaccine.subscribe.http.vo;
+package com.lawson.vaccine.subscribe.http.vo.yuemiao;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,6 +19,9 @@ public class YueMiaoR implements Serializable {
 
     @ApiModelProperty(name = "响应数据")
     private String data;
+
+    @ApiModelProperty(name = "sessionId")
+    private String sessionId;
 
     public String getCode() {
         return code;
@@ -56,6 +59,15 @@ public class YueMiaoR implements Serializable {
         return this;
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public YueMiaoR setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "YueMiaoR{" +
@@ -63,6 +75,7 @@ public class YueMiaoR implements Serializable {
                 ", status='" + status + '\'' +
                 ", msg='" + msg + '\'' +
                 ", data='" + data + '\'' +
+                ", sessionId='" + sessionId + '\'' +
                 '}';
     }
 }

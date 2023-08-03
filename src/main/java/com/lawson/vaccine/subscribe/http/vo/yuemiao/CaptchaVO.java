@@ -1,4 +1,4 @@
-package com.lawson.vaccine.subscribe.http.vo;
+package com.lawson.vaccine.subscribe.http.vo.yuemiao;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

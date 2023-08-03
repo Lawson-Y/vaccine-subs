@@ -2,38 +2,43 @@ package com.lawson.vaccine.subscribe.http.api;
 
 import com.dtflys.forest.annotation.*;
 import com.dtflys.forest.http.ForestResponse;
-import com.lawson.vaccine.subscribe.http.vo.CustomerListQueryVO;
+import com.lawson.vaccine.subscribe.dto.UserDTO;
+import com.lawson.vaccine.subscribe.http.vo.yuemiao.CustomerListQueryVO;
 
-@BaseRequest(baseURL = "https://api.cn2030.com")
+@BaseRequest(baseURL = "https://api.cn2030.com",
+        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/8287",
+        headers = {"referer: https://servicewechat.com/wx2c7f0f3c30d99445/101/page-frame.html"})
 public interface YueMiaoApi {
 
     /**
      * 提交订单
      *
      * @param data
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Post(url = "/sc/api/User/OrderPost", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    ForestResponse<String> orderPost(@JSONBody String data, @Var(value = "cook") String cookie, @Var(value = "zftsl") String zftsl);
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+    ForestResponse<String> orderPost(@JSONBody String data, @Var(value = "userDTO") UserDTO userDTO, @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取验证码
      *
      * @param mxid
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=GetCaptcha", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    ForestResponse<String> getCaptcha(@Query(name = "mxid") String mxid, @Var(value = "cook") String cookie, @Var(value = "zftsl") String zftsl);
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+    ForestResponse<String> getCaptcha(@Query(name = "mxid") String mxid, @Var(value = "userDTO") UserDTO userDTO, @Var(value = "zftsl") String zftsl);
 
     /**
      * 日期条件获取详细
@@ -41,18 +46,19 @@ public interface YueMiaoApi {
      * @param pid
      * @param id
      * @param date
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDateDetail", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getCustSubscribeDateDetail(@Query(name = "pid") String pid,
                                                       @Query(name = "id") Integer id,
                                                       @Query(name = "scdate") String date,
-                                                      @Var(value = "cook") String cookie,
+                                                      @Var(value = "userDTO") UserDTO userDTO,
                                                       @Var(value = "zftsl") String zftsl);
 
     /**
@@ -61,48 +67,51 @@ public interface YueMiaoApi {
      * @param pid
      * @param id
      * @param month
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=GetCustSubscribeDateAll", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getCustSubscribeDateAll(@Query(name = "pid") String pid,
                                                    @Query(name = "id") Integer id,
                                                    @Query(name = "month") String month,
-                                                   @Var(value = "cook") String cookie,
+                                                   @Var(value = "userDTO") UserDTO userDTO,
                                                    @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取某医院产品列表
      *
      * @param id
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=CustomerProduct", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> customerProduct(@Query(name = "id") Integer id,
-                                                   @Var(value = "cook") String cookie,
-                                                   @Var(value = "zftsl") String zftsl);
+                                           @Var(value = "userDTO") UserDTO userDTO,
+                                           @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取用户信息
      *
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=User", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    ForestResponse<String> user(@Var(value = "cook") String cookie,
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+    ForestResponse<String> user(@Var(value = "userDTO") UserDTO userDTO,
                                 @Var(value = "zftsl") String zftsl);
 
     /**
@@ -131,7 +140,7 @@ public interface YueMiaoApi {
             "zftsl: ${zftsl}"
     })
     ForestResponse<String> customerList(@Query CustomerListQueryVO queryVO,
-                                @Var(value = "zftsl") String zftsl);
+                                        @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取疫苗分类列表
@@ -160,44 +169,47 @@ public interface YueMiaoApi {
     /**
      * 获取订单状态
      *
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=GetOrderStatus", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    ForestResponse<String> getOrderStatus(@Var(value = "cook") String cookie,
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+    ForestResponse<String> getOrderStatus(@Var(value = "userDTO") UserDTO userDTO,
                                           @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取用户订单列表
      *
-     * @param cookie
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=UserSubcribeList", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    ForestResponse<String> userSubcribeList(@Var(value = "cook") String cookie,
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+    ForestResponse<String> userSubcribeList(@Var(value = "userDTO") UserDTO userDTO,
                                             @Var(value = "zftsl") String zftsl);
 
     /**
      * 获取订单详情
      *
-     * @param id     订单列表的订单id
-     * @param cookie
+     * @param id      订单列表的订单id
+     * @param userDTO
      * @param zftsl
      * @return
      */
     @Get(url = "/sc/wx/HandlerSubscribe.ashx?act=UserSubcribeDetail", headers = {
-            "Cookie: ASP.NET_SessionId=${cook}",
+            "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
+    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> userSubcribeDetail(@Query(name = "id") String id,
-                                            @Var(value = "cook") String cookie,
-                                            @Var(value = "zftsl") String zftsl);
+                                              @Var(value = "userDTO") UserDTO userDTO,
+                                              @Var(value = "zftsl") String zftsl);
 }

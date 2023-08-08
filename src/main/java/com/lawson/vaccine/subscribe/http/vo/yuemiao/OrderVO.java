@@ -47,88 +47,99 @@ public class OrderVO implements Serializable {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public OrderVO setBirthday(String birthday) {
         this.birthday = birthday;
+        return this;
     }
 
     public String getTel() {
         return tel;
     }
 
-    public void setTel(String tel) {
+    public OrderVO setTel(String tel) {
         this.tel = tel;
+        return this;
     }
 
     public Integer getSex() {
         return sex;
     }
 
-    public void setSex(Integer sex) {
+    public OrderVO setSex(Integer sex) {
         this.sex = sex;
+        return this;
     }
 
     public String getCname() {
         return cname;
     }
 
-    public void setCname(String cname) {
+    public OrderVO setCname(String cname) {
         this.cname = cname;
+        return this;
     }
 
     public Integer getDoctype() {
         return doctype;
     }
 
-    public void setDoctype(Integer doctype) {
+    public OrderVO setDoctype(Integer doctype) {
         this.doctype = doctype;
+        return this;
     }
 
     public String getIdcard() {
         return idcard;
     }
 
-    public void setIdcard(String idcard) {
+    public OrderVO setIdcard(String idcard) {
         this.idcard = idcard;
+        return this;
     }
 
     public String getMxid() {
         return mxid;
     }
 
-    public void setMxid(String mxid) {
+    public OrderVO setMxid(String mxid) {
         this.mxid = mxid;
+        return this;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public OrderVO setDate(String date) {
         this.date = date;
+        return this;
     }
 
     public String getPid() {
         return pid;
     }
 
-    public void setPid(String pid) {
+    public OrderVO setPid(String pid) {
         this.pid = pid;
+        return this;
     }
 
     public Integer getFtime() {
         return Ftime;
     }
 
-    public void setFtime(Integer ftime) {
+    public OrderVO setFtime(Integer ftime) {
         Ftime = ftime;
+        return this;
     }
 
     public String getGuid() {
         return guid;
     }
 
-    public void setGuid(String guid) {
+    public OrderVO setGuid(String guid) {
         this.guid = guid;
+        return this;
     }
 
     @Override

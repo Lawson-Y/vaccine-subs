@@ -4,19 +4,26 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.lawson.vaccine.subscribe.entity.RegisterEntity">
-        <id column="register_id" property="registerId" />
-        <result column="member_name" property="memberName" />
-        <result column="member_phone" property="memberPhone" />
-        <result column="subscribe_status" property="subscribeStatus" />
-        <result column="vaccine_1" property="vaccine1" />
-        <result column="vaccine_2" property="vaccine2" />
-        <result column="customer_id" property="customerId" />
-        <result column="next_subscribe_date" property="nextSubscribeDate" />
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="status" property="status" />
+        <result column="consuming" property="consuming" />
+        <result column="enabled" property="enabled" />
+        <result column="hospital" property="hospital" />
+        <result column="hospitalName" property="hospitalName" />
+        <result column="areaid" property="areaid" />
+        <result column="sub_date" property="subDate" />
+        <result column="vaccine1" property="vaccine1" />
+        <result column="vaccine2" property="vaccine2" />
+        <result column="agent" property="agent" />
+        <result column="wx_id" property="wxId" />
+        <result column="url" property="url" />
+        <result column="uuid" property="uuid" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        register_id, member_name, member_phone, subscribe_status, vaccine_1, vaccine_2, customer_id, next_subscribe_date
+        id, created_at, status, consuming, enabled, hospital, hospitalName, areaid, sub_date, vaccine1, vaccine2, agent, wx_id, url, uuid
     </sql>
 
 </mapper>

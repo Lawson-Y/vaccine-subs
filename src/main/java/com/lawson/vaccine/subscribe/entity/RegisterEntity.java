@@ -14,132 +14,210 @@ import java.io.Serializable;
  * </p>
  *
  * @author Lawson
- * @since 2023-08-02
+ * @since 2023-08-06
  */
-@TableName("register")
+@TableName("task_order")
 @ApiModel(value = "RegisterEntity对象", description = "")
 public class RegisterEntity implements Serializable {
 
-    @TableId(value = "register_id", type = IdType.AUTO)
-    private Integer registerId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
-    @TableField("member_name")
-    private String memberName;
+    @TableField("created_at")
+    private Integer createdAt;
 
-    @TableField("member_phone")
-    private String memberPhone;
+    @TableField("status")
+    private Integer status;
 
-    @TableField("subscribe_status")
-    private Integer subscribeStatus;
+    @TableField("consuming")
+    private Integer consuming;
 
-    @TableField("vaccine_1")
-    private Integer vaccine1;
+    @TableField("enabled")
+    private Integer enabled;
 
-    @TableField("vaccine_2")
-    private Integer vaccine2;
+    @TableField("hospital")
+    private String hospital;
 
-    @TableField("customer_id")
-    private Integer customerId;
+    @TableField("hospitalName")
+    private String hospitalName;
 
-    @TableField("next_subscribe_date")
-    private Long nextSubscribeDate;
+    @TableField("areaid")
+    private String areaid;
 
-    @TableField("wx_guid")
-    private String wxGuid;
+    @TableField("sub_date")
+    private String subDate;
 
-    public Integer getRegisterId() {
-        return registerId;
+    @TableField("vaccine1")
+    private String vaccine1;
+
+    @TableField("vaccine2")
+    private String vaccine2;
+
+    @TableField("agent")
+    private String agent;
+
+    @TableField("wx_id")
+    private String wxId;
+
+    @TableField("url")
+    private String url;
+
+    @TableField("uuid")
+    private String uuid;
+
+    public Integer getId() {
+        return id;
     }
 
-    public RegisterEntity setRegisterId(Integer registerId) {
-        this.registerId = registerId;
+    public RegisterEntity setId(Integer id) {
+        this.id = id;
         return this;
     }
 
-    public String getMemberName() {
-        return memberName;
+    public Integer getCreatedAt() {
+        return createdAt;
     }
 
-    public RegisterEntity setMemberName(String memberName) {
-        this.memberName = memberName;
+    public RegisterEntity setCreatedAt(Integer createdAt) {
+        this.createdAt = createdAt;
         return this;
     }
 
-    public String getMemberPhone() {
-        return memberPhone;
+    public Integer getStatus() {
+        return status;
     }
 
-    public RegisterEntity setMemberPhone(String memberPhone) {
-        this.memberPhone = memberPhone;
+    public RegisterEntity setStatus(Integer status) {
+        this.status = status;
         return this;
     }
 
-    public Integer getSubscribeStatus() {
-        return subscribeStatus;
+    public Integer getConsuming() {
+        return consuming;
     }
 
-    public RegisterEntity setSubscribeStatus(Integer subscribeStatus) {
-        this.subscribeStatus = subscribeStatus;
+    public RegisterEntity setConsuming(Integer consuming) {
+        this.consuming = consuming;
         return this;
     }
 
-    public Integer getVaccine1() {
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public RegisterEntity setEnabled(Integer enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public String getHospital() {
+        return hospital;
+    }
+
+    public RegisterEntity setHospital(String hospital) {
+        this.hospital = hospital;
+        return this;
+    }
+
+    public String getHospitalName() {
+        return hospitalName;
+    }
+
+    public RegisterEntity setHospitalName(String hospitalName) {
+        this.hospitalName = hospitalName;
+        return this;
+    }
+
+    public String getAreaid() {
+        return areaid;
+    }
+
+    public RegisterEntity setAreaid(String areaid) {
+        this.areaid = areaid;
+        return this;
+    }
+
+    public String getSubDate() {
+        return subDate;
+    }
+
+    public RegisterEntity setSubDate(String subDate) {
+        this.subDate = subDate;
+        return this;
+    }
+
+    public String getVaccine1() {
         return vaccine1;
     }
 
-    public RegisterEntity setVaccine1(Integer vaccine1) {
+    public RegisterEntity setVaccine1(String vaccine1) {
         this.vaccine1 = vaccine1;
         return this;
     }
 
-    public Integer getVaccine2() {
+    public String getVaccine2() {
         return vaccine2;
     }
 
-    public RegisterEntity setVaccine2(Integer vaccine2) {
+    public RegisterEntity setVaccine2(String vaccine2) {
         this.vaccine2 = vaccine2;
         return this;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    public String getAgent() {
+        return agent;
     }
 
-    public RegisterEntity setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public RegisterEntity setAgent(String agent) {
+        this.agent = agent;
         return this;
     }
 
-    public Long getNextSubscribeDate() {
-        return nextSubscribeDate;
+    public String getWxId() {
+        return wxId;
     }
 
-    public RegisterEntity setNextSubscribeDate(Long nextSubscribeDate) {
-        this.nextSubscribeDate = nextSubscribeDate;
+    public RegisterEntity setWxId(String wxId) {
+        this.wxId = wxId;
         return this;
     }
 
-    public String getWxGuid() {
-        return wxGuid;
+    public String getUrl() {
+        return url;
     }
 
-    public RegisterEntity setWxGuid(String wxGuid) {
-        this.wxGuid = wxGuid;
+    public RegisterEntity setUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public RegisterEntity setUuid(String uuid) {
+        this.uuid = uuid;
         return this;
     }
 
     @Override
     public String toString() {
         return "RegisterEntity{" +
-                "registerId=" + registerId +
-                ", memberName='" + memberName + '\'' +
-                ", memberPhone='" + memberPhone + '\'' +
-                ", subscribeStatus=" + subscribeStatus +
-                ", vaccine1=" + vaccine1 +
-                ", vaccine2=" + vaccine2 +
-                ", customerId=" + customerId +
-                ", nextSubscribeDate=" + nextSubscribeDate +
-                ", wxGuid='" + wxGuid + '\'' +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", status=" + status +
+                ", consuming=" + consuming +
+                ", enabled=" + enabled +
+                ", hospital='" + hospital + '\'' +
+                ", hospitalName='" + hospitalName + '\'' +
+                ", areaid='" + areaid + '\'' +
+                ", subDate='" + subDate + '\'' +
+                ", vaccine1='" + vaccine1 + '\'' +
+                ", vaccine2='" + vaccine2 + '\'' +
+                ", agent='" + agent + '\'' +
+                ", wxId='" + wxId + '\'' +
+                ", url='" + url + '\'' +
+                ", uuid='" + uuid + '\'' +
                 '}';
     }
 }

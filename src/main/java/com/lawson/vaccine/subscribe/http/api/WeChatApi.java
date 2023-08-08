@@ -6,8 +6,8 @@ import com.dtflys.forest.annotation.Post;
 import com.dtflys.forest.converter.json.FastjsonEncoder;
 import com.lawson.vaccine.subscribe.http.vo.wechat.*;
 
-@BaseRequest(baseURL = "https://api.cn2030.com")
-@FastjsonEncoder
+@BaseRequest(baseURL = "http://175.178.85.75:81")
+//@FastjsonEncoder
 public interface WeChatApi {
 
     /**
@@ -62,5 +62,5 @@ public interface WeChatApi {
      * 获取微信小程序授权信息
      */
     @Post(url = "/api/Auth/WXJSOperateWxData")
-    WeChatR<WXJSLoginVO> WXJSOperateWxData(@JSONBody WXJSLoginParam data);
+    WeChatR<WXJSOperateWxDataVO> WXJSOperateWxData(@JSONBody WXJSLoginParam data);
 }

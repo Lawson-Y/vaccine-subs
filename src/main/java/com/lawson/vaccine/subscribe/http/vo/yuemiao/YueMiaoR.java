@@ -23,6 +23,17 @@ public class YueMiaoR implements Serializable {
     @ApiModelProperty(name = "sessionId")
     private String sessionId;
 
+    private UserVO user;
+
+    public UserVO getUser() {
+        return user;
+    }
+
+    public YueMiaoR setUser(UserVO user) {
+        this.user = user;
+        return this;
+    }
+
     public String getCode() {
         return code;
     }

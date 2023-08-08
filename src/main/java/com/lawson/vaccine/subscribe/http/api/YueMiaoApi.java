@@ -22,7 +22,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> orderPost(@JSONBody String data, @Var(value = "userDTO") UserDTO userDTO, @Var(value = "zftsl") String zftsl);
 
     /**
@@ -37,7 +37,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getCaptcha(@Query(name = "mxid") String mxid, @Var(value = "userDTO") UserDTO userDTO, @Var(value = "zftsl") String zftsl);
 
     /**
@@ -54,7 +54,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getCustSubscribeDateDetail(@Query(name = "pid") String pid,
                                                       @Query(name = "id") Integer id,
                                                       @Query(name = "scdate") String date,
@@ -75,7 +75,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getCustSubscribeDateAll(@Query(name = "pid") String pid,
                                                    @Query(name = "id") Integer id,
                                                    @Query(name = "month") String month,
@@ -94,7 +94,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> customerProduct(@Query(name = "id") Integer id,
                                            @Var(value = "userDTO") UserDTO userDTO,
                                            @Var(value = "zftsl") String zftsl);
@@ -110,7 +110,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> user(@Var(value = "userDTO") UserDTO userDTO,
                                 @Var(value = "zftsl") String zftsl);
 
@@ -177,7 +177,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> getOrderStatus(@Var(value = "userDTO") UserDTO userDTO,
                                           @Var(value = "zftsl") String zftsl);
 
@@ -192,7 +192,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> userSubcribeList(@Var(value = "userDTO") UserDTO userDTO,
                                             @Var(value = "zftsl") String zftsl);
 
@@ -208,7 +208,7 @@ public interface YueMiaoApi {
             "Cookie: ASP.NET_SessionId=${userDTO.cookie}",
             "zftsl: ${zftsl}"
     })
-    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
+//    @HTTPProxy(host = "${userDTO.userProxy.host}", port = "${userDTO.userProxy.port}", username = "${userDTO.userProxy.uname}", password = "${userDTO.userProxy.passwd}")
     ForestResponse<String> userSubcribeDetail(@Query(name = "id") String id,
                                               @Var(value = "userDTO") UserDTO userDTO,
                                               @Var(value = "zftsl") String zftsl);

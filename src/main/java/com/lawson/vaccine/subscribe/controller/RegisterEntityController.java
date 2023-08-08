@@ -1,11 +1,15 @@
 package com.lawson.vaccine.subscribe.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.lawson.vaccine.subscribe.services.YuemiaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * <p>
@@ -23,8 +27,9 @@ public class RegisterEntityController {
     private YuemiaoService yuemiaoService;
 
     @GetMapping(path = "/{proxyId}/{uuid}")
-    public String wxLoginQr(@PathVariable(name = "uuid") String uuid) {
-        return this.yuemiaoService.getWxQr(uuid);
+    public void wxLoginQr(HttpServletResponse res, @PathVariable(name = "uuid") String uuid) throws IOException {
+        String wxQr = this.yuemiaoService.getWxQr(uuid);
+        res.sendRedirect(wxQr);
     }
 
 }

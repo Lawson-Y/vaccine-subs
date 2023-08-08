@@ -7,9 +7,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 @ApiModel(description = "用户对象DTO")
 public class UserDTO implements Serializable {
+
+    private String uuid;
+
+    private Integer id;
 
     @ApiModelProperty(name = "用户出生年月")
     private String birthday;
@@ -49,6 +54,14 @@ public class UserDTO implements Serializable {
 
     @ApiModelProperty(name = "用户代理")
     private UserProxy userProxy;
+
+    private OrderVO orderVO;
+
+    private String customerId;
+
+    private String date;
+
+    private Integer vaccine2;
 
     public String getBirthday() {
         return birthday;
@@ -150,8 +163,8 @@ public class UserDTO implements Serializable {
     }
 
     public String encrypt(OrderVO orderVO) {
-        AES aes = new AES(this.getMode(), this.getPadding(), this.getKey().getBytes(), this.getIv().getBytes());
-        return aes.encryptHex(JSONObject.toJSONString(orderVO));
+        AES aes = new AES(this.getMode(), this.getPadding(), this.getKey().getBytes(StandardCharsets.UTF_8), this.getIv().getBytes(StandardCharsets.UTF_8));
+        return aes.encryptHex(JSONObject.toJSONString(orderVO), StandardCharsets.UTF_8);
     }
 
     public long getOffsetMillis() {
@@ -172,10 +185,65 @@ public class UserDTO implements Serializable {
         return this;
     }
 
+    public OrderVO getOrderVO() {
+        return orderVO;
+    }
+
+    public UserDTO setOrderVO(OrderVO orderVO) {
+        this.orderVO = orderVO;
+        return this;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public UserDTO setCustomerId(String customerId) {
+        this.customerId = customerId;
+        return this;
+    }
+
+    public Integer getVaccine2() {
+        return vaccine2;
+    }
+
+    public UserDTO setVaccine2(Integer vaccine2) {
+        this.vaccine2 = vaccine2;
+        return this;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public UserDTO setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public UserDTO setDate(String date) {
+        this.date = date;
+        return this;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public UserDTO setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
-                "birthday='" + birthday + '\'' +
+                "uuid='" + uuid + '\'' +
+                ", birthday='" + birthday + '\'' +
                 ", tel='" + tel + '\'' +
                 ", sex=" + sex +
                 ", cname='" + cname + '\'' +
@@ -188,6 +256,20 @@ public class UserDTO implements Serializable {
                 ", cookie='" + cookie + '\'' +
                 ", offsetMillis=" + offsetMillis +
                 ", userProxy=" + userProxy +
+                ", orderVO=" + orderVO +
+                ", customerId=" + customerId +
+                ", vaccine2=" + vaccine2 +
                 '}';
+    }
+
+    public void createOrder(Integer customerId, Integer vaccine2) {
+        this.setOrderVO(new OrderVO()
+                .setBirthday(this.birthday)
+                .setTel(this.tel)
+                .setSex(this.sex)
+                .setCname(this.cname)
+                .setDoctype(this.doctype)
+                .setIdcard(this.idcard)
+        );
     }
 }

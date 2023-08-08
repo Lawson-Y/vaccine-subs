@@ -129,6 +129,11 @@
             <artifactId>disruptor</artifactId>
             <version>3.4.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -349,12 +354,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-tomcat</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <!--        redis分布式锁支持-->
             <dependency>
@@ -463,7 +462,7 @@
     </dependencyManagement>
     <build>
         <!--        指定应用文件名（jar名）-->
-        <finalName>app</finalName>
+<!--        <finalName>app</finalName>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -480,15 +479,29 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
         </plugins>
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <configuration>
+                        <mainClass>com.lawson.vaccine.subscribe.Application</mainClass>
+                    </configuration>
+                    <version>0.9.23</version>
+                </plugin>
                 <!--            maven编译-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -503,99 +516,99 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <excludes>
-                            <!-- 排除src/main/resources内资源文件，因为要拷贝资源文件到config目录 -->
-                            <exclude>bin/**</exclude>
-                            <exclude>conf/**</exclude>
-                            <exclude>lib/**</exclude>
-                            <exclude>sql/**</exclude>
-                            <exclude>static/**</exclude>
-                            <exclude>templates/**</exclude>
-                            <exclude>*.yml</exclude>
-                            <exclude>*.properties</exclude>
-                            <exclude>*.xml</exclude>
-                            <exclude>*.txt</exclude>
-                            <exclude>*.db</exclude>
-                        </excludes>
-                    </configuration>
+<!--                    <configuration>-->
+<!--                        <excludes>-->
+<!--                            &lt;!&ndash; 排除src/main/resources内资源文件，因为要拷贝资源文件到config目录 &ndash;&gt;-->
+<!--                            <exclude>bin/**</exclude>-->
+<!--                            <exclude>conf/**</exclude>-->
+<!--                            <exclude>lib/**</exclude>-->
+<!--                            <exclude>sql/**</exclude>-->
+<!--                            <exclude>static/**</exclude>-->
+<!--                            <exclude>templates/**</exclude>-->
+<!--                            <exclude>*.yml</exclude>-->
+<!--                            <exclude>*.properties</exclude>-->
+<!--                            <exclude>*.xml</exclude>-->
+<!--                            <exclude>*.txt</exclude>-->
+<!--                            <exclude>*.db</exclude>-->
+<!--                        </excludes>-->
+<!--                    </configuration>-->
                 </plugin>
                 <!--拷贝资源文件到config目录-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>copy-resources</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <resources>
-                                    <resource>
-                                        <directory>src/main/resources</directory>
-                                        <excludes>
-                                            <exclude>sql/**</exclude>
-                                        </excludes>
-                                    </resource>
-                                </resources>
-                                <outputDirectory>target/${project.artifactId}/config</outputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <id>copy-resources</id>-->
+<!--                            <phase>package</phase>-->
+<!--                            <goals>-->
+<!--                                <goal>copy-resources</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                <resources>-->
+<!--                                    <resource>-->
+<!--                                        <directory>src/main/resources</directory>-->
+<!--                                        <excludes>-->
+<!--                                            <exclude>sql/**</exclude>-->
+<!--                                        </excludes>-->
+<!--                                    </resource>-->
+<!--                                </resources>-->
+<!--                                <outputDirectory>target/${project.artifactId}/config</outputDirectory>-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
                 </plugin>
                 <!--            springboot打包插件-->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>2.7.0</version>
-                    <configuration>
-                        <!--                        取消查找本项目的main方法，解决非启动包没有main方法报错问题-->
-                        <mainClass>none</mainClass>
-                        <classifier>execute</classifier>
-                        <layout>ZIP</layout>
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                        <!-- 重写包含依赖，包含不存在的依赖，jar里没有pom里的依赖 -->
-                        <includes>
-                            <include>
-                                <groupId>non-exists</groupId>
-                                <artifactId>non-exists</artifactId>
-                            </include>
-                        </includes>
-                        <!-- 使用外部配置文件，jar包里没有资源文件 -->
-                        <addResources>true</addResources>
-                        <outputDirectory>target/${project.artifactId}</outputDirectory>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>repackage</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+<!--                    <configuration>-->
+<!--                        &lt;!&ndash;                        取消查找本项目的main方法，解决非启动包没有main方法报错问题&ndash;&gt;-->
+<!--                        <mainClass>none</mainClass>-->
+<!--                        <classifier>execute</classifier>-->
+<!--                        <layout>ZIP</layout>-->
+<!--                        <excludes>-->
+<!--                            <exclude>-->
+<!--                                <groupId>org.projectlombok</groupId>-->
+<!--                                <artifactId>lombok</artifactId>-->
+<!--                            </exclude>-->
+<!--                        </excludes>-->
+<!--                        &lt;!&ndash; 重写包含依赖，包含不存在的依赖，jar里没有pom里的依赖 &ndash;&gt;-->
+<!--                        <includes>-->
+<!--                            <include>-->
+<!--                                <groupId>non-exists</groupId>-->
+<!--                                <artifactId>non-exists</artifactId>-->
+<!--                            </include>-->
+<!--                        </includes>-->
+<!--                        &lt;!&ndash; 使用外部配置文件，jar包里没有资源文件 &ndash;&gt;-->
+<!--                        <addResources>true</addResources>-->
+<!--                        <outputDirectory>target/${project.artifactId}</outputDirectory>-->
+<!--                    </configuration>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <goals>-->
+<!--                                <goal>repackage</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
                 </plugin>
                 <!--拷贝依赖jar到指定目录 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>copy-dependencies</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>copy-dependencies</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>target/${project.artifactId}/lib</outputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <id>copy-dependencies</id>-->
+<!--                            <phase>package</phase>-->
+<!--                            <goals>-->
+<!--                                <goal>copy-dependencies</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                <outputDirectory>target/${project.artifactId}/lib</outputDirectory>-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
                 </plugin>
             </plugins>
         </pluginManagement>

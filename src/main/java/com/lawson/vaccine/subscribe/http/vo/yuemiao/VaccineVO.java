@@ -26,6 +26,8 @@ public class VaccineVO implements Serializable {
     private String BtnLable;
     private Boolean enable;
 
+    private String id;
+
     public String getText() {
         return text;
     }
@@ -125,6 +127,15 @@ public class VaccineVO implements Serializable {
         return this;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public VaccineVO setId(String id) {
+        this.id = id;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "VaccineVO{" +
@@ -139,6 +150,7 @@ public class VaccineVO implements Serializable {
                 ", date='" + date + '\'' +
                 ", BtnLable='" + BtnLable + '\'' +
                 ", enable=" + enable +
+                ", id='" + id + '\'' +
                 '}';
     }
 }

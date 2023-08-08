@@ -133,7 +133,7 @@ public class YueMiaoWrap {
         }
         String result = res.getResult();
         log.info("获取用户信息->user：{}, \n响应：{}", userDTO, result);
-        return Optional.ofNullable(JSONObject.parseObject(result, UserVO.class));
+        return Optional.ofNullable(JSONObject.parseObject(result, YueMiaoR.class).getUser());
     }
 
     /**

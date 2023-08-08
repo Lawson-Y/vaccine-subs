@@ -17,16 +17,16 @@ public class CustSubscribeDateVO extends YueMiaoR implements Serializable {
     public static class CustSubscribeDateDetailVO implements Serializable {
 
         @ApiModelProperty(name = "日期")
-        private LocalDate date;
+        private String date;
 
         @ApiModelProperty(name = "开放状态")
         private Boolean enable;
 
-        public LocalDate getDate() {
+        public String getDate() {
             return date;
         }
 
-        public CustSubscribeDateDetailVO setDate(LocalDate date) {
+        public CustSubscribeDateDetailVO setDate(String date) {
             this.date = date;
             return this;
         }

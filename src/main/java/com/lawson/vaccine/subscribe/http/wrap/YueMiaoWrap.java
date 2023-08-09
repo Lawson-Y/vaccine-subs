@@ -40,7 +40,7 @@ public class YueMiaoWrap {
      * @return
      */
     public Boolean postOrder(UserDTO userDTO, OrderVO orderVO) {
-        ForestResponse<String> res = this.yueMiaoApi.orderPost(userDTO.encrypt(orderVO), userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.orderPost(userDTO.encrypt(orderVO), userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Boolean.FALSE;
         }
@@ -60,7 +60,7 @@ public class YueMiaoWrap {
      * @return
      */
     public String getCaptcha(UserDTO userDTO, String mxid) {
-        ForestResponse<String> res = this.yueMiaoApi.getCaptcha(mxid, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.getCaptcha(mxid, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return "";
         }
@@ -79,7 +79,7 @@ public class YueMiaoWrap {
      * @return
      */
     public Optional<CustSubscribeDateVO> custSubscribeDate(UserDTO userDTO, String pid, Integer id, String month) {
-        ForestResponse<String> res = this.yueMiaoApi.getCustSubscribeDateAll(pid, id, month, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.getCustSubscribeDateAll(pid, id, month, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Optional.empty();
         }
@@ -95,7 +95,7 @@ public class YueMiaoWrap {
      * @return
      */
     public Optional<CustomerDetailVO> custSubscribeDateDetail(UserDTO userDTO, String pid, Integer id, String date) {
-        ForestResponse<String> res = this.yueMiaoApi.getCustSubscribeDateDetail(pid, id, date, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.getCustSubscribeDateDetail(pid, id, date, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Optional.empty();
         }
@@ -111,7 +111,7 @@ public class YueMiaoWrap {
      * @return
      */
     public Optional<CustomerVO> customerProduct(UserDTO userDTO, Integer id) {
-        ForestResponse<String> res = this.yueMiaoApi.customerProduct(id, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.customerProduct(id, userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Optional.empty();
         }
@@ -127,7 +127,7 @@ public class YueMiaoWrap {
      * @return
      */
     public Optional<UserVO> user(UserDTO userDTO) {
-        ForestResponse<String> res = this.yueMiaoApi.user(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.user(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Optional.empty();
         }
@@ -142,8 +142,8 @@ public class YueMiaoWrap {
      * @param rawdata
      * @return
      */
-    public Optional<UserDTO> auth(String code, String rawdata) {
-        ForestResponse<String> res = this.yueMiaoApi.auth(code, rawdata, GenericIdUtils.zfsw(0));
+    public Optional<UserDTO> auth(String code, String rawdata, UserDTO userDTO) {
+        ForestResponse<String> res = this.yueMiaoApi.auth(code, rawdata, GenericIdUtils.zfsw(0), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return Optional.empty();
         }
@@ -162,8 +162,8 @@ public class YueMiaoWrap {
      * @param queryVO
      * @return
      */
-    public List<CustomerVO> customerList(CustomerListQueryVO queryVO) {
-        ForestResponse<String> res = this.yueMiaoApi.customerList(queryVO, GenericIdUtils.zfsw(0));
+    public List<CustomerVO> customerList(CustomerListQueryVO queryVO, UserDTO userDTO) {
+        ForestResponse<String> res = this.yueMiaoApi.customerList(queryVO, GenericIdUtils.zfsw(0), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return new ArrayList<>(1);
         }
@@ -182,8 +182,8 @@ public class YueMiaoWrap {
      * @param id
      * @return
      */
-    public List<Vaccine2VO.Vaccine2InternalVO> getCat2(Integer id) {
-        ForestResponse<String> res = this.yueMiaoApi.getCat2(id, GenericIdUtils.zfsw(0));
+    public List<Vaccine2VO.Vaccine2InternalVO> getCat2(Integer id, UserDTO userDTO) {
+        ForestResponse<String> res = this.yueMiaoApi.getCat2(id, GenericIdUtils.zfsw(0), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return new ArrayList<>(1);
         }
@@ -201,8 +201,8 @@ public class YueMiaoWrap {
      *
      * @return
      */
-    public List<Vaccine1VO.Vaccine1InternalVO> getCat1() {
-        ForestResponse<String> res = this.yueMiaoApi.getCat1(GenericIdUtils.zfsw(0));
+    public List<Vaccine1VO.Vaccine1InternalVO> getCat1(UserDTO userDTO) {
+        ForestResponse<String> res = this.yueMiaoApi.getCat1(GenericIdUtils.zfsw(0), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return new ArrayList<>(1);
         }
@@ -222,7 +222,7 @@ public class YueMiaoWrap {
      * @return
      */
     public String getOrderStatus(UserDTO userDTO) {
-        ForestResponse<String> res = this.yueMiaoApi.getOrderStatus(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.getOrderStatus(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return null;
         }
@@ -241,7 +241,7 @@ public class YueMiaoWrap {
      * @return
      */
     public List<OrderListVO.OrderDetailVO> userSubcribeList(UserDTO userDTO) {
-        ForestResponse<String> res = this.yueMiaoApi.userSubcribeList(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()));
+        ForestResponse<String> res = this.yueMiaoApi.userSubcribeList(userDTO, GenericIdUtils.zfsw(userDTO.getOffsetMillis()), userDTO.getUserProxyIp());
         if (200 != res.getStatusCode()) {
             return null;
         }

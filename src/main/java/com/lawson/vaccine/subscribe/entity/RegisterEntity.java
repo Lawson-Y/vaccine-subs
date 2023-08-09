@@ -65,6 +65,18 @@ public class RegisterEntity implements Serializable {
     @TableField("uuid")
     private String uuid;
 
+    @TableField("proxy")
+    private String proxy;
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public RegisterEntity setProxy(String proxy) {
+        this.proxy = proxy;
+        return this;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -218,6 +230,7 @@ public class RegisterEntity implements Serializable {
                 ", wxId='" + wxId + '\'' +
                 ", url='" + url + '\'' +
                 ", uuid='" + uuid + '\'' +
+                ", proxy='" + proxy + '\'' +
                 '}';
     }
 }

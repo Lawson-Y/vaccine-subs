@@ -7,7 +7,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.lawson.vaccine.subscribe.dto.UserDTO;
-import com.lawson.vaccine.subscribe.dto.UserProxy;
 import com.lawson.vaccine.subscribe.dto.WxUuidScanDTO;
 import com.lawson.vaccine.subscribe.entity.RegisterEntity;
 import com.lawson.vaccine.subscribe.http.api.WeChatApi;
@@ -15,10 +14,12 @@ import com.lawson.vaccine.subscribe.http.vo.wechat.*;
 import com.lawson.vaccine.subscribe.http.vo.yuemiao.*;
 import com.lawson.vaccine.subscribe.http.wrap.YueMiaoWrap;
 import com.lawson.vaccine.subscribe.service.RegisterEntityService;
+import kdl.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,12 +27,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 @Service
 public class YuemiaoService {
+
+    public static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static final Logger log = LoggerFactory.getLogger(YuemiaoService.class);
 
@@ -44,6 +49,27 @@ public class YuemiaoService {
     private RegisterEntityService registerEntityService;
 
     private WeChatApi weChatApi;
+
+    private Client clientProxy;
+
+    public static final ConcurrentHashMap<String, VaccineVO> CUSTOMER_VACCINE_CACHE = new ConcurrentHashMap<>();
+
+    public static final ConcurrentHashMap<String, List<CustSubscribeDateVO.CustSubscribeDateDetailVO>> CUSTOMER_VACCINE_DATE_CACHE = new ConcurrentHashMap<>();
+
+    public static final ConcurrentHashMap<String, List<CustomerSubscribeTimeVO>> CUSTOMER_VACCINE_DATE_TIME_CACHE = new ConcurrentHashMap<>();
+
+    public static final ConcurrentHashMap<String, Integer> BLOCK = new ConcurrentHashMap<>();
+
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    private final ConcurrentHashMap<Integer, ScheduledFuture<?>> futureMap = new ConcurrentHashMap<>();
+
+    @Autowired
+    public YuemiaoService setClientProxy(Client clientProxy) {
+        this.clientProxy = clientProxy;
+        return this;
+    }
 
     @Autowired
     public YuemiaoService setYueMiaoWrap(YueMiaoWrap yueMiaoWrap) {
@@ -63,18 +89,50 @@ public class YuemiaoService {
         return this;
     }
 
+    public YueMiaoWrap getYueMiaoWrap() {
+        return yueMiaoWrap;
+    }
+
+    public RegisterEntityService getRegisterEntityService() {
+        return registerEntityService;
+    }
+
+    public WeChatApi getWeChatApi() {
+        return weChatApi;
+    }
+
+    public Client getClientProxy() {
+        return clientProxy;
+    }
+
+    public List<UserDTO> getSubUserList() {
+        return subUserList;
+    }
+
+    public ThreadPoolTaskScheduler getThreadPoolTaskScheduler() {
+        return threadPoolTaskScheduler;
+    }
+
+    public ConcurrentHashMap<Integer, ScheduledFuture<?>> getFutureMap() {
+        return futureMap;
+    }
+
+    public Map<Integer, WxUuidScanDTO> getWaitScanWx() {
+        return waitScanWx;
+    }
+
     /**
      * 扫描放号日期
      */
-    @Scheduled(cron = "0 0/10 * * * ? ")
+    @Scheduled(cron = "0 0/30 * * * ? ")
     public void scanDate() {
         List<RegisterEntity> list = this.registerEntityService.lambdaQuery()
                 .eq(RegisterEntity::getStatus, NOT_SUBSCRIBE)
+                .eq(RegisterEntity::getEnabled, 1)
                 .list();
         Map<Integer, CustomerVO> customerVOMap = new HashMap<>();
         UserDTO userDTO = new UserDTO()
-                .setCookie("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTEwNTEyNzMuNjE2NDY2MywiZXhwIjoxNjkxMDU0ODczLjYxNjQ2NjMsInN1YiI6IllOVy5WSVAiLCJqdGkiOiIyMDIzMDgwMzE2Mjc1MyIsInZhbCI6ImFkZlFBUUlBQUFBRWJtOXVaUnh2Y1hJMWJ6VkhlSFY2TFRSNU5UZHJWRjlMVkVSWlpFMDFkRmhGQUJ4dlZUSTJXSFEyUVMxS1FUTmhcclxuUjBoTlNWaGtSSFU1Y2pkQllXUnpEakV4Tnk0eE56TXVOek11TVRRekFBQUFBQUFBQUE9PSJ9.DQbSzpvmCdgMjWINjMFizCgBytnOTlexcIE_iahChc0")
-                .setUserProxy(new UserProxy().setHost("127.0.0.1").setPort("7890"));
+                .setCookie("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTEwNTEyNzMuNjE2NDY2MywiZXhwIjoxNjkxMDU0ODczLjYxNjQ2NjMsInN1YiI6IllOVy5WSVAiLCJqdGkiOiIyMDIzMDgwMzE2Mjc1MyIsInZhbCI6ImFkZlFBUUlBQUFBRWJtOXVaUnh2Y1hJMWJ6VkhlSFY2TFRSNU5UZHJWRjlMVkVSWlpFMDFkRmhGQUJ4dlZUSTJXSFEyUVMxS1FUTmhcclxuUjBoTlNWaGtSSFU1Y2pkQllXUnpEakV4Tnk0eE56TXVOek11TVRRekFBQUFBQUFBQUE9PSJ9.DQbSzpvmCdgMjWINjMFizCgBytnOTlexcIE_iahChc0");
         for (RegisterEntity registerEntity : list) {
             String customerIds = registerEntity.getHospital();
             if (StrUtil.isEmpty(customerIds)) {
@@ -121,13 +179,15 @@ public class YuemiaoService {
         return "";
     }
 
+    @Deprecated
     private List<UserDTO> subUserList = new ArrayList<>();
 
     /**
      * 扫描可预约订单
      */
-    @Scheduled(cron = "0 27,57 * * * ? ")
+//    @Scheduled(cron = "0 27,57 * * * ? ")
 //    @Async(value = "myAsync")
+    @Deprecated
     public void scanSubscribe() {
         List<RegisterEntity> list = this.registerEntityService.lambdaQuery()
                 .eq(RegisterEntity::getStatus, WAIT_SUBSCRIBE)
@@ -153,13 +213,14 @@ public class YuemiaoService {
                             if (Objects.nonNull(jsCodeR.getData())) {
                                 WeChatR<WXJSOperateWxDataVO> userInfoR = this.weChatApi.WXJSOperateWxData(wxjsLoginParam);
                                 WXGetUserInfoVO userInfoJson = JSONObject.parseObject(Base64Decoder.decode(userInfoR.getData().getData()), WXGetUserInfoVO.class);
-                                Optional<UserDTO> auth = this.yueMiaoWrap.auth(jsCodeR.getData().getCode(), userInfoJson.getData());
+                                Optional<UserDTO> auth = this.yueMiaoWrap.auth(jsCodeR.getData().getCode(), userInfoJson.getData(), new UserDTO().setUserProxyIp(d.getProxy()));
                                 if (auth.isPresent()) {
                                     UserDTO userDTO = auth.get();
                                     Optional<UserVO> user = this.yueMiaoWrap.user(userDTO);
                                     if (user.isPresent()) {
                                         UserVO userVO = user.get();
                                         userDTO
+                                                .setUserProxyIp(d.getProxy())
                                                 .setVaccine2(Integer.valueOf(d.getVaccine2()))
                                                 .setDate(d.getSubDate())
                                                 .setCustomerId(d.getHospital())
@@ -172,8 +233,7 @@ public class YuemiaoService {
                                                 .setDoctype(userVO.getDoctype())
                                                 .setIdcard(userVO.getIdcard())
                                                 .setKey(userInfoJson.getSignature().substring(0, 16));
-                                        userDTO.createOrder(Integer.valueOf(customerList[i]), Integer.valueOf(d.getVaccine2()));
-                                        // TODO 设置代理
+                                        userDTO.createOrder();
                                         return userDTO;
                                     }
                                 }
@@ -186,8 +246,9 @@ public class YuemiaoService {
         log.info("待订阅列表：{}", JSONObject.toJSONString(userDTOList));
     }
 
-    @Scheduled(cron = "58 29,59 * * * ? ")
+    //    @Scheduled(cron = "58 29,59 * * * ? ")
 //    @Async(value = "myAsync")
+    @Deprecated
     public void submitOrder() {
         if (CollUtil.isEmpty(this.subUserList)) {
             return;
@@ -201,13 +262,10 @@ public class YuemiaoService {
         }
     }
 
+    @Deprecated
     private void doSubmitOrder(Vector<UserDTO> vector, List<UserDTO> userDTOList) {
         List<UserDTO> collect = userDTOList.parallelStream()
                 .map(d -> {
-                    LocalTime time = LocalTime.now().plusNanos(d.getOffsetMillis() * 1000000);
-//                    while (!(time.getMinute() == 30 || time.getMinute() == 0)) {
-//                        time = LocalTime.now().plusNanos(d.getOffsetMillis() * 1000000);
-//                    }
                     int tryCount = 0;
                     do {
                         if (tryCount > 5) {
@@ -221,6 +279,11 @@ public class YuemiaoService {
                             if (NumberUtil.isNumber(s) && Long.parseLong(s) > 0) {
                                 Integer customerId = Integer.valueOf(customerIdSplit[i]);
                                 LocalDateTime subDate = LocalDateTime.ofEpochSecond(Long.parseLong(s), 0, ZoneOffset.ofHours(8));
+                                ScheduledFuture<?> scheduledFuture = this.threadPoolTaskScheduler.schedule(new SubmitOrderTask(this, d.getId(), null),
+                                        subDate.minusNanos(d.getOffsetMillis() * 1000000).toInstant(ZoneOffset.ofHours(8)));
+
+                                this.futureMap.put(d.getId(), scheduledFuture);
+
                                 d.getOrderVO().setDate(subDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                                 Optional<CustomerVO> customerVO = this.yueMiaoWrap.customerProduct(d, customerId);
                                 log.info("uuid：{}，查询产品列表：{}", d.getUuid(), JSONObject.toJSONString(customerVO));
@@ -293,7 +356,7 @@ public class YuemiaoService {
             Map.Entry<Integer, WxUuidScanDTO> next = iterator.next();
             WxUuidScanDTO value = next.getValue();
             int scanNum = value.getScanNum();
-            if (scanNum > 4) {
+            if (scanNum > 10) {
                 this.waitScanWx.remove(next.getKey());
             }
             LoginQrcodeStatusParam loginStatusParam = new LoginQrcodeStatusParam();
@@ -303,7 +366,6 @@ public class YuemiaoService {
                 continue;
             }
             LoginQrcodeStatusVO data = wxStatus.getData();
-            System.out.println(data);
             String wxid = data.getWxid();
             if (StrUtil.isEmpty(wxid)) {
                 continue;
@@ -318,6 +380,7 @@ public class YuemiaoService {
             WeChatR<WXLoginManualVO> wxLoginR = this.weChatApi.WXLoginManual(loginManualParam);
             if (Objects.nonNull(wxLoginR)) {
                 log.info("微信：{}登录成功", value.getGuid());
+                this.doJsLogin(value.getUserDTO());
                 this.waitScanWx.remove(next.getKey());
             }
         }
@@ -336,32 +399,141 @@ public class YuemiaoService {
                 .oneOpt();
         if (registerOpt.isPresent()) {
             RegisterEntity register = registerOpt.get();
+            if (register.getStatus().equals(2)) {
+                return "";
+            }
             String[] split = register.getSubDate().split(",");
-            for (String s : split) {
+            String[] hospital = register.getHospital().split(",");
+            LocalDateTime now = LocalDateTime.now();
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i];
                 if (StrUtil.isEmpty(s)) {
                     continue;
                 }
-                if (Integer.parseInt(s) > 0) {
-                    String guid = register.getWxId();
-                    if (StrUtil.isEmpty(guid)) {
-                        WeChatR<CreateWXVO> wx = this.weChatApi.createWX();
-                        if (Objects.nonNull(wx.getData()) && StrUtil.isNotEmpty(wx.getData().getGuid())) {
-                            this.registerEntityService.updateById(
-                                    new RegisterEntity()
-                                            .setId(register.getId())
-                                            .setWxId(guid)
-                            );
-                            guid = wx.getData().getGuid();
-                        }
+                long subDateLong = Long.parseLong(s);
+                LocalDateTime subDateTime = LocalDateTime.ofEpochSecond(subDateLong, 0, ZoneOffset.ofHours(8));
+                long betweenMinutes = ChronoUnit.MINUTES.between(now, subDateTime);
+                if (betweenMinutes >= 30) {
+                    return "请" + (betweenMinutes - 30) + "后再来登录，预约时间：" + subDateTime.format(dateTimeFormat);
+                }
+                if (betweenMinutes < 1) {
+                    return "";
+                }
+                String guid = register.getWxId();
+                if (StrUtil.isEmpty(guid)) {
+                    WeChatR<CreateWXVO> wx = this.weChatApi.createWX();
+                    if (Objects.nonNull(wx.getData()) && StrUtil.isNotEmpty(wx.getData().getGuid())) {
+                        this.registerEntityService.updateById(
+                                new RegisterEntity()
+                                        .setId(register.getId())
+                                        .setWxId(guid)
+                        );
+                        guid = wx.getData().getGuid();
                     }
-                    if (StrUtil.isNotEmpty(guid)) {
-                        WeChatR<WXQrCodeVO> loginQrcodeWX = this.weChatApi.getLoginQrcodeWX(new CreateWXVO().setGuid(guid));
-                        this.waitScanWx.put(register.getId(), new WxUuidScanDTO().setGuid(guid).setUuid(loginQrcodeWX.getData().getUuid()));
-                        return loginQrcodeWX.getUrl();
+                }
+                if (StrUtil.isNotEmpty(guid)) {
+                    String proxy = this.getOneProxyIp("重庆");
+                    int validTime = this.getProxyIpValidTime(proxy);
+                    while (validTime < 2100){
+                        proxy = this.getOneProxyIp("重庆");
+                        validTime = this.getProxyIpValidTime(proxy);
                     }
+                    String[] proxyIpPort = proxy.split(":");
+                    SetProxyWXParam proxyWX = new SetProxyWXParam();
+                    proxyWX
+                            .setGuid(guid)
+                            .setAddress(proxyIpPort[0])
+                            .setPort(Integer.valueOf(proxyIpPort[1]))
+                            .setEnable(true);
+                    WeChatR<Void> voidWeChatR = this.weChatApi.setProxyWX(proxyWX);
+                    this.registerEntityService.updateById(
+                            new RegisterEntity()
+                                    .setId(register.getId())
+                                    .setProxy(proxy)
+                    );
+                    WeChatR<WXQrCodeVO> loginQrcodeWX = this.weChatApi.getLoginQrcodeWX(new CreateWXVO().setGuid(guid));
+                    UserDTO userDTO = new UserDTO();
+                    userDTO
+                            .setWxId(register.getWxId())
+                            .setUserProxyIp(proxy)
+                            .setVaccine2(Integer.valueOf(register.getVaccine2()))
+                            .setDate(split[i])
+                            .setCustomerId(hospital[i])
+                            .setUuid(register.getUuid())
+                            .setId(register.getId());
+                    this.waitScanWx.put(register.getId(),
+                            new WxUuidScanDTO()
+                                    .setGuid(guid)
+                                    .setUuid(loginQrcodeWX.getData().getUuid())
+                                    .setUserDTO(userDTO)
+                    );
+                    return loginQrcodeWX.getUrl();
                 }
             }
         }
         return "";
+    }
+
+    public void doJsLogin(UserDTO userDTO) {
+        WXJSLoginParam wxjsLoginParam = new WXJSLoginParam();
+        wxjsLoginParam
+                .setAppId("wx2c7f0f3c30d99445")
+                .setGuid(userDTO.getWxId());
+        WeChatR<WXJSLoginVO> jsCodeR = this.weChatApi.WXJSLogin(wxjsLoginParam);
+        if (Objects.nonNull(jsCodeR.getData())) {
+            WeChatR<WXJSOperateWxDataVO> userInfoR = this.weChatApi.WXJSOperateWxData(wxjsLoginParam);
+            WXGetUserInfoVO userInfoJson = JSONObject.parseObject(Base64Decoder.decode(userInfoR.getData().getData()), WXGetUserInfoVO.class);
+            Optional<UserDTO> authOpt = this.yueMiaoWrap.auth(jsCodeR.getData().getCode(), userInfoJson.getData(), new UserDTO().setUserProxyIp(userDTO.getUserProxyIp()));
+            if (authOpt.isPresent()) {
+                UserDTO auth = authOpt.get();
+                Optional<UserVO> user = this.yueMiaoWrap.user(userDTO);
+                if (user.isPresent()) {
+                    UserVO userVO = user.get();
+                    userDTO
+                            .setCookie(auth.getCookie())
+                            .setBirthday(userVO.getBirthday())
+                            .setTel(userVO.getTel())
+                            .setSex(userVO.getSex())
+                            .setCname(userVO.getCname())
+                            .setDoctype(userVO.getDoctype())
+                            .setIdcard(userVO.getIdcard())
+                            .setKey(userInfoJson.getSignature().substring(0, 16));
+                    userDTO.createOrder();
+                    LocalDateTime subDate = LocalDateTime.parse(userDTO.getDate());
+                    ScheduledFuture<?> scheduledFuture = this.threadPoolTaskScheduler.schedule(new SubmitOrderTask(this, userDTO.getId(), userDTO),
+                            subDate.minusNanos(userDTO.getOffsetMillis() * 1000000).toInstant(ZoneOffset.ofHours(8)));
+                    this.futureMap.put(userDTO.getId(), scheduledFuture);
+                }
+            }
+        }
+    }
+
+    public String getOneProxyIp(String area) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("sign_type", "hmacsha1");
+        params.put("format", "json");
+        params.put("area", area);
+        params.put("pt", 2);
+        params.put("st", 2100);
+        try {
+            String[] dps = this.clientProxy.get_dps(1, params);
+            return dps[0];
+        } catch (Exception e) {
+            log.error("获取代理ip失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getProxyIpValidTime(String ip) {
+        try {
+            Integer time = this.clientProxy.get_dps_valid_time(ip).get(ip);
+            if (Objects.nonNull(time)) {
+                return time;
+            }
+            return 0;
+        } catch (Exception e) {
+            log.error("获取代理ip有效时间失败", e);
+            return 0;
+        }
     }
 }

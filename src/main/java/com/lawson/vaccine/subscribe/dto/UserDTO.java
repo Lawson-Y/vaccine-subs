@@ -55,6 +55,9 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(name = "用户代理")
     private UserProxy userProxy;
 
+    @ApiModelProperty(name = "用户代理IP地址")
+    private String userProxyIp;
+
     private OrderVO orderVO;
 
     private String customerId;
@@ -62,6 +65,26 @@ public class UserDTO implements Serializable {
     private String date;
 
     private Integer vaccine2;
+
+    private String wxId;
+
+    public String getWxId() {
+        return wxId;
+    }
+
+    public UserDTO setWxId(String wxId) {
+        this.wxId = wxId;
+        return this;
+    }
+
+    public String getUserProxyIp() {
+        return userProxyIp;
+    }
+
+    public UserDTO setUserProxyIp(String userProxyIp) {
+        this.userProxyIp = userProxyIp;
+        return this;
+    }
 
     public String getBirthday() {
         return birthday;
@@ -243,6 +266,7 @@ public class UserDTO implements Serializable {
     public String toString() {
         return "UserDTO{" +
                 "uuid='" + uuid + '\'' +
+                ", id=" + id +
                 ", birthday='" + birthday + '\'' +
                 ", tel='" + tel + '\'' +
                 ", sex=" + sex +
@@ -256,13 +280,15 @@ public class UserDTO implements Serializable {
                 ", cookie='" + cookie + '\'' +
                 ", offsetMillis=" + offsetMillis +
                 ", userProxy=" + userProxy +
+                ", userProxyIp='" + userProxyIp + '\'' +
                 ", orderVO=" + orderVO +
-                ", customerId=" + customerId +
+                ", customerId='" + customerId + '\'' +
+                ", date='" + date + '\'' +
                 ", vaccine2=" + vaccine2 +
                 '}';
     }
 
-    public void createOrder(Integer customerId, Integer vaccine2) {
+    public void createOrder() {
         this.setOrderVO(new OrderVO()
                 .setBirthday(this.birthday)
                 .setTel(this.tel)
@@ -270,6 +296,7 @@ public class UserDTO implements Serializable {
                 .setCname(this.cname)
                 .setDoctype(this.doctype)
                 .setIdcard(this.idcard)
+                .setDate(this.getDate().substring(0, 10))
         );
     }
 }

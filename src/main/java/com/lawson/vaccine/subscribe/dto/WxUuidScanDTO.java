@@ -10,6 +10,17 @@ public class WxUuidScanDTO implements Serializable {
 
     private String guid;
 
+    private UserDTO userDTO;
+
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+
+    public WxUuidScanDTO setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
+        return this;
+    }
+
     public String getUuid() {
         return uuid;
     }

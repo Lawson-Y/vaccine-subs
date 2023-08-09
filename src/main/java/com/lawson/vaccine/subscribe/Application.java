@@ -5,7 +5,6 @@ import com.dtflys.forest.springboot.annotation.ForestScan;
 import com.lawson.vaccine.subscribe.dto.UserDTO;
 import com.lawson.vaccine.subscribe.http.api.YueMiaoApi;
 import com.lawson.vaccine.subscribe.http.vo.yuemiao.OrderVO;
-import com.lawson.vaccine.subscribe.services.YuemiaoService;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,9 +16,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 @MapperScan(basePackages = "com.lawson.vaccine.subscribe.mapper")
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext run = SpringApplication.run(Application.class, args);
-        YuemiaoService bean = run.getBean(YuemiaoService.class);
     }
 
     public static void test1(YueMiaoApi api) {
